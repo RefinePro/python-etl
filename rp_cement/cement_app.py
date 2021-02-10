@@ -1,5 +1,6 @@
 from cement import CaughtSignal, App
 from rp_cement.controllers.database_controller import *
+from rp_cement.controllers.etl_controller import *
 from rp_cement.controllers.log_controller import *
 from rp_cement.log.log_handler import LogHandler
 
@@ -36,7 +37,7 @@ class CementApp(App):
         console.log(var, log_locals=False)
 
     class Meta:
-        handlers = [DatabaseController, LogController, LogHandler]
+        handlers = [DatabaseController, LogController, LogHandler, ETLController]
         
         extensions = []
         

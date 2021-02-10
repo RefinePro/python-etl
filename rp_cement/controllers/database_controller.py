@@ -29,14 +29,48 @@ class DatabaseController(BaseController):
 
     @ex(
         help='Migrate the database',
+        arguments=[
+            ( [ '--schema' ], { 'help' : '(Postgres) use a specific schema'} ),
+            ( [ '--tables' ], { 'help' : 'Migrate only those tables'} )
+        ]
     )
     def db_migrate(self):
         # We care only about the tables defined in models
         from models.db import db
+        # Joined must be outed
+
+        # print(peeweedbevolve.all_models)
+        # return
         declared_tables = [m._meta.table_name for m in pw.Model.__subclasses__()]
-        out_of_scope_tables = [t if t not in declared_tables else None for t in db.get_tables()]
-        [self.app.log.warning('Table '+table+' is not a Model and will be ignored') for table in out_of_scope_tables]
-        db.evolve(ignore_tables=out_of_scope_tables)
+        for m in peeweedbevolve.all_models:
+            if m._meta:
+                declared_tables.append(m._meta.table_name)
+        # return
+        if self.app.pargs.schema:
+            out_of_scope_tables = [t if t not in declared_tables else None for t in db.get_tables(schema=self.app.pargs.schema)]
+        else:
+            out_of_scope_tables = [t if t not in declared_tables else None for t in db.get_tables()]
+        out_of_scope_tables = [i for i in out_of_scope_tables if i]
+        out_of_scope_tables.append('basemodel')
+        
+        if self.app.pargs.tables:
+            to_unregister = []
+            for m in peeweedbevolve.all_models:
+                # print(m._meta.table_name, self.app.pargs.tables.split(','))
+                if m._meta.table_name not in self.app.pargs.tables.split(','):
+                    to_unregister.append(m)
+                    out_of_scope_tables.append(m._meta.table_name)
+            
+            for m in to_unregister:
+                peeweedbevolve.unregister(m)
+        print(out_of_scope_tables)
+        [self.app.log.warning('Table '+table+' will be ignored') for table in out_of_scope_tables]
+        # return
+        if self.app.pargs.schema:
+            db.evolve(ignore_tables=out_of_scope_tables, schema=self.app.pargs.schema)
+        else:
+            db.evolve(ignore_tables=out_of_scope_tables)
+
 
 
     @ex(
@@ -45,7 +79,7 @@ class DatabaseController(BaseController):
             ( [ '--tables' ],
               { 'help' : 'Print models only for the given tables, comma-separated'} ),
             ( [ '--schema' ],
-              { 'help' : 'IF using PG, set the schema'} )
+              { 'help' : '(Postgres) use a specific schema'} )
         ]
     )
     def db_generate_models(self):
