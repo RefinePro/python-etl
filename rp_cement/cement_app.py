@@ -7,6 +7,7 @@ from rp_cement.log.log_handler import LogHandler
 from rich.console import Console
 from rich import inspect
 console = Console()
+import os
 
 def configure_database(app):
     dsn = app.config.get('APP', 'database')
@@ -61,7 +62,8 @@ class CementApp(App):
                 'colorize_file_log': False
             },
             'APP': {
-                'database': None
+                'database': None,
+                'data_dir':os.path.join(os.getcwd(), 'var')
             }
         }
 
@@ -69,6 +71,8 @@ class CementApp(App):
             ('pre_run', configure_database),
             # ('post_setup', extend_app),
         ]
+
+
 
         # # call sys.exit() on close
         close_on_exit = True
