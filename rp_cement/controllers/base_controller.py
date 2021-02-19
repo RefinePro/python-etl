@@ -1,14 +1,12 @@
 from cement import Controller
 
 
-
 class BaseController(Controller):
     def dump(self, var):
-    	self.app.dump(var)
+        self.app.dump(var)
 
     def inspect(self, var):
-    	self.app.inspect(var)
-        
+        self.app.inspect(var)
 
     def debug(self, *args):
         message = " ".join([str(m) for m in args])
