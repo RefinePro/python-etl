@@ -3,7 +3,7 @@ from rp_cement.controllers.database_controller import *
 from rp_cement.controllers.etl_controller import *
 from rp_cement.controllers.log_controller import *
 from rp_cement.log.log_handler import LogHandler
-
+from cement import shell
 from rich.console import Console
 from rich import inspect
 
@@ -35,6 +35,41 @@ class CementApp(App):
 
     def dump(self, var):
         console.log(var, log_locals=False)
+
+    def debug(self, *args):
+        message = " ".join([str(m) for m in args])
+        self.log.debug(message)
+
+    def info(self, *args):
+        message = " ".join([str(m) for m in args])
+        self.log.info(message)
+
+    def warning(self, *args):
+        message = " ".join([str(m) for m in args])
+        self.log.warning(message)
+
+    def error(self, *args):
+        message = " ".join([str(m) for m in args])
+        self.log.error(message)
+
+    def fatal(self, *args):
+        message = " ".join([str(m) for m in args])
+        self.log.fatal(message)
+
+    def simple_cmd(self, cmd, log=True):
+        if log:
+            self.log.debug("Run command " + cmd)
+        out, err, code = shell.cmd(cmd)
+        if err:
+            self.log.fatal(err)
+            raise Exception(err)
+
+        lines = out.splitlines()
+        for line in lines:
+            decoded = line.decode("utf-8").strip()
+            # print(decoded)
+            if decoded:
+                self.log.debug(decoded)
 
     class Meta:
         handlers = [DatabaseController, LogController, LogHandler, ETLController]

@@ -10,20 +10,20 @@ class BaseController(Controller):
 
     def debug(self, *args):
         message = " ".join([str(m) for m in args])
-        self.app.log.debug(message)
+        self.app.debug(message)
 
     def info(self, *args):
         message = " ".join([str(m) for m in args])
-        self.app.log.info(message)
+        self.app.info(message)
 
     def warning(self, *args):
         message = " ".join([str(m) for m in args])
-        self.app.log.warning(message)
+        self.app.warning(message)
 
     def error(self, *args):
         message = " ".join([str(m) for m in args])
-        self.app.log.error(message)
+        self.app.error(message)
 
     def fatal(self, *args):
         message = " ".join([str(m) for m in args])
-        self.app.log.fatal(message)
+        self.app.fatal(message)
