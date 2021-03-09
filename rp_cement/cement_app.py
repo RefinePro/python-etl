@@ -58,18 +58,23 @@ class CementApp(App):
 
     def simple_cmd(self, cmd, log=True):
         if log:
-            self.log.debug("Run command " + cmd)
+            self.log.info("Run command " + cmd)
         out, err, code = shell.cmd(cmd)
         if err:
             self.log.fatal(err)
             raise Exception(err)
 
         lines = out.splitlines()
+        out_lines = []
         for line in lines:
             decoded = line.decode("utf-8").strip()
-            # print(decoded)
             if decoded:
-                self.log.debug(decoded)
+                self.log.info(decoded)
+                out_lines.append(decoded)
+            else:
+                out_lines.append(line)
+
+        return out_lines
 
     class Meta:
         handlers = [DatabaseController, LogController, LogHandler, ETLController]

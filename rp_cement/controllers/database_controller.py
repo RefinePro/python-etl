@@ -48,13 +48,10 @@ class DatabaseController(BaseController):
         # return
         if self.app.pargs.schema:
             out_of_scope_tables = [
-                t if t not in declared_tables else None
-                for t in db.get_tables(schema=self.app.pargs.schema)
+                t if t not in declared_tables else None for t in db.get_tables(schema=self.app.pargs.schema)
             ]
         else:
-            out_of_scope_tables = [
-                t if t not in declared_tables else None for t in db.get_tables()
-            ]
+            out_of_scope_tables = [t if t not in declared_tables else None for t in db.get_tables()]
         out_of_scope_tables = [i for i in out_of_scope_tables if i]
         out_of_scope_tables.append("basemodel")
 
@@ -69,10 +66,7 @@ class DatabaseController(BaseController):
             for m in to_unregister:
                 peeweedbevolve.unregister(m)
         print(out_of_scope_tables)
-        [
-            self.app.log.warning("Table " + table + " will be ignored")
-            for table in out_of_scope_tables
-        ]
+        [self.app.log.warning("Table " + table + " will be ignored") for table in out_of_scope_tables]
         # return
         if self.app.pargs.schema:
             db.evolve(ignore_tables=out_of_scope_tables, schema=self.app.pargs.schema)
@@ -95,9 +89,7 @@ class DatabaseController(BaseController):
         # print(connect_kwargs)
         connect = {
             "user": connect_kwargs["user"],
-            "password": connect_kwargs["passwd"]
-            if "passwd" in connect_kwargs
-            else connect_kwargs["password"],
+            "password": connect_kwargs["passwd"] if "passwd" in connect_kwargs else connect_kwargs["password"],
             "host": connect_kwargs["host"],
         }
         if self.app.pargs.schema:
