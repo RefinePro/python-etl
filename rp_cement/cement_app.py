@@ -19,7 +19,6 @@ def configure_database(app):
         from models.db import db
 
         dsn = app.config.get("APP", "database")
-        app.log.debug("Initialized database")
         db.initialize(connect(dsn))
     else:
         app.log.debug("No database to initialize")
